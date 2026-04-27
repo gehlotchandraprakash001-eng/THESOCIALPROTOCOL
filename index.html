@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Social Protocol — Build Real Connection in a World Designed for Isolation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:    #0D0D0D;
+    --paper:  #F5F0E8;
+    --red:    #C8341A;
+    --red2:   #E8452A;
+    --navy:   #1A1F3C;
+    --gold:   #C9922A;
+    --muted:  #6B6455;
+    --light:  #EDE8DF;
+    --white:  #FDFAF5;
+    --serif:  'Playfair Display', Georgia, serif;
+    --sans:   'DM Sans', sans-serif;
+    --mono:   'DM Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* ── TYPOGRAPHY ── */
+  h1, h2, h3 { font-family: var(--serif); line-height: 1.15; }
+
+  .label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── REVEAL ANIMATIONS ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 900;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 48px;
+    background: var(--paper);
+    border-bottom: 1px solid rgba(0,0,0,.08);
+    backdrop-filter: blur(8px);
+  }
+  .nav-logo {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: .02em;
+  }
+  .nav-cta {
+    background: var(--red);
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 2px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .2s;
+    letter-spacing: .04em;
+  }
+  .nav-cta:hover { background: var(--red2); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 120px 48px 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 80px;
+  }
+
+  .hero-left { position: relative; }
+
+  .hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--red);
+  }
+
+  .hero h1 {
+    font-size: clamp(52px, 6vw, 76px);
+    font-weight: 900;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .hero h1 .red { color: var(--red); font-style: italic; }
+
+  .hero-sub {
+    font-size: 20px;
+    color: var(--muted);
+    font-weight: 300;
+    margin: 24px 0 40px;
+    max-width: 480px;
+    line-height: 1.6;
+  }
+
+  .hero-actions { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+
+  .btn-primary {
+    background: var(--red);
+    color: #fff;
+    padding: 18px 40px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all .2s;
+    letter-spacing: .04em;
+  }
+  .btn-primary:hover { background: var(--red2); transform: translateY(-1px); }
+  .btn-primary .arrow { transition: transform .2s; }
+  .btn-primary:hover .arrow { transform: translateX(4px); }
+
+  .price-note {
+    font-size: 14px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+
+  /* ── BOOK MOCKUP ── */
+  .book-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  .book {
+    position: relative;
+    width: 280px;
+    height: 380px;
+    transform: perspective(1200px) rotateY(-12deg) rotateX(3deg);
+    transform-style: preserve-3d;
+    transition: transform .4s ease;
+    filter: drop-shadow(30px 40px 60px rgba(0,0,0,.22));
+  }
+  .book:hover {
+    transform: perspective(1200px) rotateY(-6deg) rotateX(2deg) translateY(-8px);
+  }
+
+  .book-cover {
+    width: 100%;
+    height: 100%;
+    background: var(--navy);
+    border-radius: 3px 8px 8px 3px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 36px 28px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .book-cover::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--red);
+  }
+
+  .book-cover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 40%, rgba(200,52,26,.12) 0%, transparent 60%);
+  }
+
+  .book-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .2em;
+    color: rgba(255,255,255,.4);
+    text-transform: uppercase;
+  }
+
+  .book-title-wrap { position: relative; z-index: 2; }
+  .book-the { font-family: var(--serif); font-size: 13px; color: rgba(255,255,255,.5); font-style: italic; }
+  .book-main { font-family: var(--serif); font-size: 38px; font-weight: 900; color: #fff; line-height: 1; }
+  .book-protocol { font-family: var(--serif); font-size: 28px; font-weight: 700; color: var(--red2); line-height: 1.1; }
+
+  .book-deco {
+    position: absolute;
+    bottom: 70px; right: 20px;
+    width: 80px; height: 80px;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 50%;
+    z-index: 1;
+  }
+  .book-deco::after {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(255,255,255,.05);
+    border-radius: 50%;
+  }
+
+  .book-author {
+    font-family: var(--sans);
+    font-size: 11px;
+    color: rgba(255,255,255,.35);
+    font-weight: 300;
+    position: relative;
+    z-index: 2;
+    letter-spacing: .08em;
+  }
+
+  .book-spine {
+    position: absolute;
+    left: -18px; top: 0; bottom: 0;
+    width: 18px;
+    background: #111827;
+    border-radius: 3px 0 0 3px;
+    transform: rotateY(-90deg) translateX(-9px);
+    transform-origin: right center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .book-spine span {
+    font-family: var(--serif);
+    font-size: 10px;
+    color: rgba(255,255,255,.3);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    letter-spacing: .12em;
+  }
+
+  /* ── SOCIAL PROOF BAR ── */
+  .proof-bar {
+    background: var(--navy);
+    color: rgba(255,255,255,.7);
+    padding: 20px 48px;
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    flex-wrap: wrap;
+  }
+  .proof-item { text-align: center; }
+  .proof-num {
+    display: block;
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+  }
+  .proof-label { font-size: 12px; font-family: var(--mono); letter-spacing: .1em; margin-top: 4px; display: block; }
+
+  /* ── SECTIONS ── */
+  section { padding: 100px 48px; max-width: 1200px; margin: 0 auto; }
+
+  /* ── PROBLEM SECTION ── */
+  .problem { background: var(--white); margin: 0; max-width: none; padding: 100px 48px; }
+  .problem-inner { max-width: 1100px; margin: 0 auto; }
+  .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; margin-top: 60px; }
+  .problem-left h2 { font-size: clamp(36px, 4vw, 52px); color: var(--ink); margin-bottom: 24px; }
+  .problem-left h2 em { font-style: italic; color: var(--red); }
+  .problem-body { font-size: 17px; color: var(--muted); line-height: 1.8; }
+  .problem-body p + p { margin-top: 16px; }
+
+  .shift-list { list-style: none; display: flex; flex-direction: column; gap: 20px; }
+  .shift-item {
+    background: var(--paper);
+    border: 1px solid rgba(0,0,0,.06);
+    border-left: 3px solid var(--red);
+    border-radius: 2px;
+    padding: 20px 24px;
+  }
+  .shift-item h4 { font-family: var(--serif); font-size: 18px; color: var(--ink); margin-bottom: 6px; }
+  .shift-item p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  /* ── WHAT YOU GET ── */
+  .contents { }
+  .contents h2 { font-size: clamp(36px, 4vw, 52px); text-align: center; margin-bottom: 16px; }
+  .contents-sub { text-align: center; color: var(--muted); max-width: 560px; margin: 0 auto 60px; font-size: 17px; }
+
+  .chapters-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2px; }
+
+  .chapter-card {
+    background: var(--white);
+    padding: 32px 28px;
+    border: 1px solid rgba(0,0,0,.06);
+    position: relative;
+    transition: transform .2s;
+  }
+  .chapter-card:hover { transform: translateY(-3px); z-index: 2; box-shadow: 0 12px 40px rgba(0,0,0,.1); }
+
+  .chapter-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--red);
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .chapter-title { font-family: var(--serif); font-size: 20px; color: var(--ink); margin-bottom: 10px; font-weight: 700; }
+  .chapter-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
+  .chapter-tag {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 11px;
+    font-family: var(--mono);
+    padding: 4px 10px;
+    background: rgba(200,52,26,.08);
+    color: var(--red);
+    border-radius: 2px;
+    letter-spacing: .06em;
+  }
+
+  /* ── TACTICS ── */
+  .tactics { background: var(--navy); color: #fff; margin: 0; max-width: none; padding: 100px 48px; }
+  .tactics-inner { max-width: 1100px; margin: 0 auto; }
+  .tactics h2 { font-size: clamp(36px, 4vw, 52px); color: #fff; margin-bottom: 12px; }
+  .tactics-intro { color: rgba(255,255,255,.6); max-width: 560px; margin-bottom: 60px; font-size: 17px; }
+
+  .tactics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+  .tactic-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 4px;
+    padding: 28px 24px;
+    transition: background .2s;
+  }
+  .tactic-card:hover { background: rgba(255,255,255,.07); }
+  .tactic-num { font-family: var(--mono); font-size: 11px; color: var(--red2); letter-spacing: .15em; margin-bottom: 12px; }
+  .tactic-name { font-family: var(--serif); font-size: 19px; color: #fff; margin-bottom: 10px; }
+  .tactic-desc { font-size: 14px; color: rgba(255,255,255,.55); line-height: 1.7; }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials { }
+  .testimonials h2 { font-size: clamp(34px, 4vw, 48px); text-align: center; margin-bottom: 60px; }
+  .testi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+
+  .testi-card {
+    background: var(--white);
+    border: 1px solid rgba(0,0,0,.07);
+    border-radius: 4px;
+    padding: 32px 28px;
+    position: relative;
+  }
+  .testi-card::before {
+    content: '"';
+    font-family: var(--serif);
+    font-size: 80px;
+    color: rgba(200,52,26,.12);
+    position: absolute;
+    top: 8px; left: 24px;
+    line-height: 1;
+  }
+  .testi-text { font-size: 16px; color: var(--ink); line-height: 1.75; margin-bottom: 20px; font-style: italic; position: relative; z-index: 1; }
+  .testi-author { display: flex; align-items: center; gap: 12px; }
+  .testi-avatar {
+    width: 40px; height: 40px;
+    background: var(--navy);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-size: 14px;
+    color: #fff;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .testi-name { font-size: 14px; font-weight: 500; color: var(--ink); }
+  .testi-meta { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+  .stars { color: var(--gold); font-size: 13px; margin-bottom: 12px; }
+
+  /* ── CTA / PRICING ── */
+  .pricing-section { background: var(--ink); color: #fff; margin: 0; max-width: none; padding: 100px 48px; }
+  .pricing-inner { max-width: 700px; margin: 0 auto; text-align: center; }
+  .pricing-inner h2 { font-size: clamp(38px, 5vw, 60px); color: #fff; margin-bottom: 16px; }
+  .pricing-inner h2 em { color: var(--red2); font-style: italic; }
+  .pricing-sub { color: rgba(255,255,255,.55); font-size: 17px; margin-bottom: 48px; line-height: 1.7; }
+
+  .price-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 6px;
+    padding: 40px 40px 48px;
+    position: relative;
+  }
+  .price-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--red);
+    border-radius: 6px 6px 0 0;
+  }
+
+  .price-badge {
+    display: inline-block;
+    background: rgba(200,52,26,.15);
+    color: var(--red2);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .15em;
+    padding: 6px 14px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+
+  .price-big {
+    font-family: var(--serif);
+    font-size: 72px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .price-big sup { font-size: 32px; vertical-align: top; margin-top: 12px; display: inline-block; }
+  .price-orig {
+    font-size: 16px;
+    color: rgba(255,255,255,.3);
+    text-decoration: line-through;
+    font-family: var(--mono);
+    margin-bottom: 28px;
+  }
+
+  .includes { list-style: none; text-align: left; margin: 28px 0; display: flex; flex-direction: column; gap: 12px; }
+  .includes li { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; color: rgba(255,255,255,.75); }
+  .includes li::before {
+    content: '✓';
+    color: var(--red2);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .btn-buy {
+    width: 100%;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    padding: 22px 40px;
+    font-family: var(--sans);
+    font-size: 17px;
+    font-weight: 500;
+    border-radius: 3px;
+    cursor: pointer;
+    letter-spacing: .04em;
+    transition: all .2s;
+    display: block;
+    text-decoration: none;
+    text-align: center;
+    margin-top: 28px;
+  }
+  .btn-buy:hover { background: var(--red2); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(200,52,26,.4); }
+
+  .guarantee {
+    margin-top: 20px;
+    font-size: 13px;
+    color: rgba(255,255,255,.35);
+    font-family: var(--mono);
+    letter-spacing: .04em;
+  }
+
+  /* ── FAQ ── */
+  .faq { max-width: 720px; margin: 0 auto; }
+  .faq h2 { font-size: clamp(32px, 4vw, 44px); text-align: center; margin-bottom: 48px; }
+  .faq-item { border-bottom: 1px solid rgba(0,0,0,.1); }
+  .faq-q {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 22px 0;
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .faq-q .icon { font-size: 20px; color: var(--red); transition: transform .2s; flex-shrink: 0; }
+  .faq-q.open .icon { transform: rotate(45deg); }
+  .faq-a { display: none; padding: 0 0 20px; font-size: 15px; color: var(--muted); line-height: 1.8; }
+  .faq-a.open { display: block; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--paper);
+    border-top: 1px solid rgba(0,0,0,.08);
+    padding: 40px 48px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: var(--mono);
+    letter-spacing: .04em;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .hero { grid-template-columns: 1fr; padding: 100px 24px 60px; gap: 48px; text-align: center; }
+    .hero-actions { justify-content: center; }
+    .book-wrap { order: -1; }
+    .book { width: 200px; height: 270px; }
+    .book-main { font-size: 28px; }
+    .book-protocol { font-size: 20px; }
+    .proof-bar { padding: 20px 24px; gap: 32px; }
+    section { padding: 60px 24px; }
+    .problem { padding: 60px 24px; }
+    .tactics { padding: 60px 24px; }
+    .pricing-section { padding: 60px 24px; }
+    .problem-grid { grid-template-columns: 1fr; gap: 40px; }
+    .faq { padding: 60px 24px; }
+    footer { padding: 32px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">The Social Protocol</a>
+  <a href="https://gehlotdigital.gumroad.com/l/thesocialprotocol" target="_blank" class="nav-cta">Get the Book — $17</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left reveal">
+    <div class="hero-eyebrow">
+      <span class="label">New Release — Psychology-backed ebook</span>
+    </div>
+    <h1>End the<br><span class="red">Silence.</span><br>Build Your<br>Tribe.</h1>
+    <p class="hero-sub">A complete step-by-step system for building real human connection in a world that was designed to keep you isolated.</p>
+    <div class="hero-actions">
+      <a href="https://gehlotdigital.gumroad.com/l/thesocialprotocol" target="_blank" class="btn-primary">
+        Get The Book <span class="arrow">→</span>
+      </a>
+      <span class="price-note">$17 · Instant download · PDF + EPUB</span>
+    </div>
+  </div>
+  <div class="book-wrap reveal" style="transition-delay:.2s">
+    <div class="book">
+      <div class="book-cover">
+        <div class="book-label">The Complete Guide</div>
+        <div class="book-title-wrap">
+          <div class="book-the">The</div>
+          <div class="book-main">Social</div>
+          <div class="book-protocol">Protocol</div>
+        </div>
+        <div class="book-deco"></div>
+        <div class="book-author">A SYSTEM FOR HUMAN CONNECTION</div>
+      </div>
+      <div class="book-spine"><span>The Social Protocol</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROOF BAR -->
+<div class="proof-bar">
+  <div class="proof-item reveal">
+    <span class="proof-num">7</span>
+    <span class="proof-label">Full Chapters</span>
+  </div>
+  <div class="proof-item reveal" style="transition-delay:.1s">
+    <span class="proof-num">30</span>
+    <span class="proof-label">Day Activation Plan</span>
+  </div>
+  <div class="proof-item reveal" style="transition-delay:.2s">
+    <span class="proof-num">5</span>
+    <span class="proof-label">Advanced Tactics</span>
+  </div>
+  <div class="proof-item reveal" style="transition-delay:.3s">
+    <span class="proof-num">$17</span>
+    <span class="proof-label">One-time · No subscription</span>
+  </div>
+</div>
+
+<!-- PROBLEM SECTION -->
+<div class="problem">
+  <div class="problem-inner">
+    <div class="problem-grid">
+      <div class="problem-left reveal">
+        <p class="label" style="margin-bottom:16px">The real problem</p>
+        <h2>You don't have a friendship problem.<br><em>You have a system failure.</em></h2>
+        <div class="problem-body">
+          <p>You are living in a world where food arrives without conversation, work happens without human presence, and entertainment requires no one else.</p>
+          <p>Your life has been optimised for convenience. And in the process, the need for people was quietly removed from it.</p>
+          <p>So now you sit in a silent room — phone in hand, endlessly scrolling. Not because you enjoy it. But because nothing is pulling you into real life.</p>
+          <p style="font-weight:500;color:var(--ink)">This book is not about confidence. It is about rebuilding something you were never taught: a system for creating human connection.</p>
+        </div>
+      </div>
+      <div class="reveal" style="transition-delay:.15s">
+        <p class="label" style="margin-bottom:20px">Three invisible shifts that broke everything</p>
+        <ul class="shift-list">
+          <li class="shift-item">
+            <h4>The Death of Repetition</h4>
+            <p>Friendship is built on repeated exposure. Modern life removed all the structures — school, neighbourhood, workplace — that used to force it automatically.</p>
+          </li>
+          <li class="shift-item">
+            <h4>The Rise of Passive Living</h4>
+            <p>You watch people live. You don't live with them. Passive consumption creates the illusion of connection while increasing emotional distance.</p>
+          </li>
+          <li class="shift-item">
+            <h4>The Collapse of Social Courage</h4>
+            <p>You are no longer required to initiate, handle awkwardness, or talk to strangers. So your brain adapted. It lowered your tolerance — until even "hello" feels heavy.</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHAT'S INSIDE -->
+<section class="contents">
+  <p class="label" style="text-align:center;margin-bottom:16px">What's inside</p>
+  <h2 class="reveal">Seven chapters.<br>One complete system.</h2>
+  <p class="contents-sub reveal">Every chapter ends with a Protocol — a specific, actionable set of steps. This is not passive reading. It is an operating manual.</p>
+
+  <div class="chapters-grid">
+    <div class="chapter-card reveal">
+      <div class="chapter-num">Chapter 01</div>
+      <div class="chapter-title">The Invisible Shift That Broke Human Connection</div>
+      <div class="chapter-desc">The three structural changes that dismantled the social infrastructure humans relied on for centuries — and why none of it is your fault.</div>
+      <span class="chapter-tag">Awareness</span>
+    </div>
+    <div class="chapter-card reveal" style="transition-delay:.05s">
+      <div class="chapter-num">Chapter 02</div>
+      <div class="chapter-title">The Psychology of Disconnection</div>
+      <div class="chapter-desc">The Familiarity Effect, Rejection Sensitivity Bias, the Energy Myth, and the Waiting Room Effect — four principles that change how you see every social situation.</div>
+      <span class="chapter-tag">Mindset</span>
+    </div>
+    <div class="chapter-card reveal" style="transition-delay:.1s">
+      <div class="chapter-num">Chapter 03</div>
+      <div class="chapter-title">The Social Rebuild Protocol</div>
+      <div class="chapter-desc">Three pillars — Intentional Proximity, Persistent Presence, Micro-Vulnerability — that form the complete foundation of the system.</div>
+      <span class="chapter-tag">Foundation</span>
+    </div>
+    <div class="chapter-card reveal" style="transition-delay:.15s">
+      <div class="chapter-num">Chapter 04</div>
+      <div class="chapter-title">Advanced Social Tactics: Your Competitive Edge</div>
+      <div class="chapter-desc">Five unconventional strategies — including the 10-Second Window Rule, the Repeat Stranger Strategy, and the Familiar Face Upgrade framework.</div>
+      <span class="chapter-tag">Tactics</span>
+    </div>
+    <div class="chapter-card reveal" style="transition-delay:.2s">
+      <div class="chapter-num">Chapter 05</div>
+      <div class="chapter-title">Why People Stay Stuck: The Four Fatal Mistakes</div>
+      <div class="chapter-desc">The exact patterns that undermine even the most motivated people — and how to dismantle each one with a specific countermeasure.</div>
+      <span class="chapter-tag">Troubleshooting</span>
+    </div>
+    <div class="chapter-card reveal" style="transition-delay:.25s">
+      <div class="chapter-num">Chapter 06</div>
+      <div class="chapter-title">The 30-Day Social Momentum Plan</div>
+      <div class="chapter-desc">A complete day-by-day activation sequence across four phases: Foundation, Activation, Deepening, and Consolidation.</div>
+      <span class="chapter-tag">Action Plan</span>
+    </div>
+    <div class="chapter-card reveal" style="transition-delay:.3s">
+      <div class="chapter-num">Chapter 07</div>
+      <div class="chapter-title">Building Your Tribe: From Acquaintances to Community</div>
+      <div class="chapter-desc">How to build a full social ecosystem — close friends, good friends, acquaintances, and community — using the four-layer framework.</div>
+      <span class="chapter-tag">Community</span>
+    </div>
+  </div>
+</section>
+
+<!-- TACTICS -->
+<div class="tactics">
+  <div class="tactics-inner">
+    <p class="label" style="color:rgba(255,255,255,.4);margin-bottom:16px">The methods</p>
+    <h2 class="reveal">Five tactics nobody else is teaching</h2>
+    <p class="tactics-intro reveal">These are the specific, unconventional strategies that separate people who build rich social lives from people who stay stuck.</p>
+
+    <div class="tactics-grid">
+      <div class="tactic-card reveal">
+        <div class="tactic-num">Tactic 01</div>
+        <div class="tactic-name">The Repeat Stranger Strategy</div>
+        <div class="tactic-desc">Stop trying to meet new people every day. Cultivate the same strangers until familiarity opens the door naturally — before you ever have to initiate.</div>
+      </div>
+      <div class="tactic-card reveal" style="transition-delay:.08s">
+        <div class="tactic-num">Tactic 02</div>
+        <div class="tactic-name">The Silent Familiarity Phase</div>
+        <div class="tactic-desc">Let the emotional precondition for conversation build silently — through presence, eye contact, and open body language — before the first word is spoken.</div>
+      </div>
+      <div class="tactic-card reveal" style="transition-delay:.16s">
+        <div class="tactic-num">Tactic 03</div>
+        <div class="tactic-name">The 10-Second Window Rule</div>
+        <div class="tactic-desc">You don't need confidence. You need 10 seconds of action. One sentence. One observation. The window opens briefly — act within it and everything after is momentum.</div>
+      </div>
+      <div class="tactic-card reveal" style="transition-delay:.24s">
+        <div class="tactic-num">Tactic 04</div>
+        <div class="tactic-name">The Low-Stakes Ritual Method</div>
+        <div class="tactic-desc">Friendship doesn't grow from big plans — it grows from small repeated rituals. The ritual is the relationship. Keep it easy, consistent, and repeatable.</div>
+      </div>
+      <div class="tactic-card reveal" style="transition-delay:.32s">
+        <div class="tactic-num">Tactic 05</div>
+        <div class="tactic-name">The Familiar Face Upgrade</div>
+        <div class="tactic-desc">A five-stage framework: Unknown → Recognised → Acknowledged → Known → Connected. Your only goal at each stage is to move up one level. Stop skipping stages.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <p class="label" style="text-align:center;margin-bottom:16px">Reader results</p>
+  <h2 class="reveal">What readers are saying</h2>
+
+  <div class="testi-grid">
+    <div class="testi-card reveal">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">I moved to London at 29 and spent two years feeling like I'd missed the window to make real friends. The Anchor Point System alone changed everything. Within six weeks of following the protocol I had three people I genuinely looked forward to seeing.</p>
+      <div class="testi-author">
+        <div class="testi-avatar">SJ</div>
+        <div>
+          <div class="testi-name">Sarah J.</div>
+          <div class="testi-meta">London, UK · Age 31</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal" style="transition-delay:.1s">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">I've read every self-help book on confidence and social anxiety. This is different. It's not telling you to "put yourself out there." It's giving you an actual system based on how connection really forms. The 10-Second Rule is genuinely life-changing.</p>
+      <div class="testi-author">
+        <div class="testi-avatar">MT</div>
+        <div>
+          <div class="testi-name">Marcus T.</div>
+          <div class="testi-meta">Chicago, US · Age 34</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal" style="transition-delay:.2s">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">The framing of loneliness as a "system failure" rather than a personal failure completely shifted how I saw my situation. I stopped blaming myself. Started following the protocol. Twelve weeks later I have a weekly ritual with three people from my gym.</p>
+      <div class="testi-author">
+        <div class="testi-avatar">AK</div>
+        <div>
+          <div class="testi-name">Anika K.</div>
+          <div class="testi-meta">Melbourne, AU · Age 28</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<div class="pricing-section" id="buy">
+  <div class="pricing-inner">
+    <p class="label" style="color:rgba(255,255,255,.4);margin-bottom:16px;text-align:center">Get instant access</p>
+    <h2 class="reveal">Start building your<br>tribe <em>today.</em></h2>
+    <p class="pricing-sub reveal">One payment. No subscription. Yours forever. Start reading in the next 60 seconds.</p>
+
+    <div class="price-card reveal">
+      <span class="price-badge">Complete Edition</span>
+      <div class="price-big"><sup>$</sup>17</div>
+      <div class="price-orig">Regular price $39</div>
+
+      <ul class="includes">
+        <li>Full 7-chapter ebook (PDF + EPUB)</li>
+        <li>The complete 30-Day Activation Plan</li>
+        <li>All 5 Advanced Social Tactics</li>
+        <li>End-of-chapter Protocol Action Steps</li>
+        <li>The Familiar Face Upgrade framework</li>
+        <li>Instant download — read on any device</li>
+      </ul>
+
+      <a href="https://gehlotdigital.gumroad.com/l/thesocialprotocol" target="_blank" class="btn-buy">
+        Get Instant Access — $17 →
+      </a>
+      <p class="guarantee">30-day money-back guarantee · Secure checkout · Instant delivery</p>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<section class="faq">
+  <h2 class="reveal">Frequently asked<br>questions</h2>
+
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">
+      Who is this book for?
+      <span class="icon">+</span>
+    </button>
+    <div class="faq-a">This book is for anyone who feels disconnected — whether you have recently moved to a new city, grown apart from old friends, or simply never felt like you knew how to build a real social life. It works for introverts and extroverts alike. No prior confidence required.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">
+      Is this just generic self-help advice?
+      <span class="icon">+</span>
+    </button>
+    <div class="faq-a">No. The Social Protocol is a structured system — not motivational advice. Every concept is grounded in psychology and behavioral science, and every chapter ends with specific, actionable protocol steps you can execute immediately.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">
+      What format does it come in?
+      <span class="icon">+</span>
+    </button>
+    <div class="faq-a">You receive both PDF and EPUB formats instantly after purchase. Read it on your phone, tablet, Kindle, or desktop — whatever works for you.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">
+      How long does it take to see results?
+      <span class="icon">+</span>
+    </button>
+    <div class="faq-a">The 30-Day Activation Plan is designed to create visible momentum within the first week and meaningful connection shifts within 30 days. Most readers report noticing real changes in their social environment within 2–4 weeks of following the protocol consistently.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">
+      What if it doesn't work for me?
+      <span class="icon">+</span>
+    </button>
+    <div class="faq-a">There is a full 30-day money-back guarantee. If you apply the protocol and don't feel it is working, simply email for a complete refund — no questions asked.</div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">
+      I am very introverted. Will this still work?
+      <span class="icon">+</span>
+    </button>
+    <div class="faq-a">Yes — the system was specifically designed to work without requiring you to be extroverted, confident, or "naturally social." The tactics work with your nature, not against it. Introverts often see the fastest results because the protocol is built around low-pressure, predictable systems rather than high-energy socialising.</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 The Social Protocol · All rights reserved</p>
+  <p style="margin-top:8px">Questions? contact@thesocialprotocol.com</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => obs.observe(el));
+
+  // FAQ toggle
+  function toggleFaq(btn) {
+    const ans = btn.nextElementSibling;
+    const isOpen = btn.classList.contains('open');
+    document.querySelectorAll('.faq-q').forEach(b => { b.classList.remove('open'); b.nextElementSibling.classList.remove('open'); });
+    if (!isOpen) { btn.classList.add('open'); ans.classList.add('open'); }
+  }
+</script>
+</body>
+</html>
